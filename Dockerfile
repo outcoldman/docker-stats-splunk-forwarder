@@ -13,6 +13,7 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/*
 
 ADD inputs.conf ${SPLUNK_BACKUP_DOCKER_APP}/default/
+ADD props.conf ${SPLUNK_BACKUP_DOCKER_APP}/default/
 ADD docker_inspect.sh ${SPLUNK_BACKUP_DOCKER_APP}/bin/
 ADD docker_stats.sh ${SPLUNK_BACKUP_DOCKER_APP}/bin/
 
