@@ -5,4 +5,4 @@ DOCKER_BIN=$(dirname "$0")/docker
   | tail -n +2 \
   | grep -Ev "\w+\s+0\.00%\s+0\sB/0\sB\s+0\.00%\s+0\sB/0\sB" \
   | sed 's/\//  /g' \
-  | awk -F '[[:space:]][[:space:]]+' '{print $1","$2","$3","$4","$5","$6","$7}'
+  | sed -E 's/\s\s+/,/g'
