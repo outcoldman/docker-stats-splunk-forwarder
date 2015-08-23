@@ -16,5 +16,7 @@ ADD inputs.conf ${SPLUNK_BACKUP_DOCKER_APP}/default/
 ADD props.conf ${SPLUNK_BACKUP_DOCKER_APP}/default/
 ADD docker_inspect.sh ${SPLUNK_BACKUP_DOCKER_APP}/bin/
 ADD docker_stats.sh ${SPLUNK_BACKUP_DOCKER_APP}/bin/
+ADD docker_top.sh ${SPLUNK_BACKUP_DOCKER_APP}/bin/
+ADD docker_events.sh ${SPLUNK_BACKUP_DOCKER_APP}/bin/
 
 RUN chmod +x ${SPLUNK_BACKUP_DOCKER_APP}/bin/*.sh
