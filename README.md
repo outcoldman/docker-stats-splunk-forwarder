@@ -11,7 +11,6 @@
 - [Installation](#installation)
 - [Quick Start](#quick-start)
 - [Configuration](#configuration)
-- [Search Examples](#search-examples)
 
 ## Supported tags
 
@@ -30,6 +29,8 @@ Dockerfile to build Splunk Universal Forwarder with preconfigured scripts
 which monitors Docker host. It uses official docker client to read statistics
 and information about containers from mounted docker unix socket. Mounting
 `/var/run/docker.sock` from the host is required.
+
+This image works great with [docker-stats-splunk](https://hub.docker.com/r/outcoldman/docker-stats-splunk/).
 
 ### Collecting information
 
@@ -101,72 +102,11 @@ docker run --hostname docker \
 
 > Container hostname will be used in the host field of all forwarded events.
 
+I recommend you to start with [docker-stats-splunk](https://hub.docker.com/r/outcoldman/docker-stats-splunk/)
+to see the benefits of collected data.
+
 ## Configuration
 
 - `SPLUNK_FORWARD_SERVER` - specify connection to the Splunk indexer.
 
 See [docker-splunk](https://github.com/outcoldman/docker-splunk) for more details.
-
-## Search Examples
-
-> I'm still working on preconfigured Splunk Instance with some predefined
-> Dashboards.
-
-- CPU usage (%) by all containers
-
-```
-source=docker_stats |
-eval cpu_percent_n=tonumber(rtrim(cpu_percent,"%")) |
-stats sum(cpu_percent_n) as cpu_percent_n by _time |
-timechart max(cpu_percent_n)
-```
-
-- Memory Usage (Gb) by all containers (Used/Limit)
-
-```
-source=docker_stats |
-eval mem_usage_a=split(mem_usage," ") |
-eval mem_usage_gb=case(
-    mvindex(mem_usage_a,1)=="B",tonumber(mvindex(mem_usage_a,0))/1024/1024,
-    mvindex(mem_usage_a,1)=="kB",tonumber(mvindex(mem_usage_a,0))/1024/1024,
-    mvindex(mem_usage_a,1)=="MB",tonumber(mvindex(mem_usage_a,0))/1024,
-    mvindex(mem_usage_a,1)=="GB",tonumber(mvindex(mem_usage_a,0))
-) |
-eval mem_limit_a=split(mem_limit," ") |
-eval mem_limit_gb=case(
-    mvindex(mem_limit_a,1)=="B",tonumber(mvindex(mem_limit_a,0))/1024/1024,
-    mvindex(mem_limit_a,1)=="kB",tonumber(mvindex(mem_limit_a,0))/1024/1024,
-    mvindex(mem_limit_a,1)=="MB",tonumber(mvindex(mem_limit_a,0))/1024,
-    mvindex(mem_limit_a,1)=="GB",tonumber(mvindex(mem_limit_a,0))
-) |
-stats sum(mem_usage_gb) as mem_usage_gb, sum(mem_limit_gb) as mem_limit_gb by _time |
-timechart max(mem_usage_gb), max(mem_limit_gb)
-```
-
-- CPU Usage (%) - Max by container
-
-```
-source=docker_stats |
-join [
-    search host=docker source=docker_inspect |
-    eval container_id=substr(mvindex(Id,0), 0, 12) |
-    eval container_name=mvindex(Name,0) |
-    table container_id, container_name |
-    dedup container_id, container_name
-] |
-timechart limit=20 max(cpu_percent) by container_name
-```
-
-- Memory Usage (%) - Max by container
-
-```
-source=docker_stats |
-join [
-    search host=docker source=docker_inspect |
-    eval container_id=substr(mvindex(Id,0), 0, 12) |
-    eval container_name=mvindex(Name,0) |
-    table container_id, container_name |
-    dedup container_id, container_name
-] |
-timechart limit=20 max(mem_percent) by container_name
-```
