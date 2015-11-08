@@ -1,7 +1,7 @@
 FROM outcoldman/splunk:latest-forwarder
 MAINTAINER Denis Gladkikh <docker-stats-splunk-forwarder@denis.gladkikh.email>
 
-ENV DOCKER_VERSION 1.8.1
+ENV DOCKER_VERSION 1.9.0
 ENV SPLUNK_BACKUP_DOCKER_APP ${SPLUNK_BACKUP_DEFAULT_ETC}/etc/apps/docker
 
 RUN apt-get update \
