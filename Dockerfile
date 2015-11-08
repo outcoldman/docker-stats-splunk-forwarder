@@ -1,4 +1,4 @@
-FROM outcoldman/splunk:latest-forwarder
+FROM outcoldman/splunk:6.2.6-forwarder
 MAINTAINER Denis Gladkikh <docker-stats-splunk-forwarder@denis.gladkikh.email>
 
 ENV DOCKER_VERSION 1.9.0
