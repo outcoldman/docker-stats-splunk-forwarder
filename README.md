@@ -10,7 +10,7 @@
     - [Version](#version)
 - [Installation](#installation)
 - [Quick Start](#quick-start)
-- [Configuration](#configuration)
+- [Known issues](#known-issues)
 
 ## Supported tags
 
@@ -96,7 +96,7 @@ To manually start container
 docker run --hostname docker \
     --name docker_stats_splunk_forwarder \
     --volume /var/run/docker.sock:/var/run/docker.sock:ro \
-    -e "SPLUNK_FORWARD_SERVER=splunk_indexer:9997"
+    -e "SPLUNK_FORWARD_SERVER=splunk_indexer:9997" \
     -d outcoldman/docker-stats-splunk-forwarder:latest
 ```
 
@@ -110,3 +110,36 @@ to see the benefits of collected data.
 - `SPLUNK_FORWARD_SERVER` - specify connection to the Splunk indexer.
 
 See [docker-splunk](https://github.com/outcoldman/docker-splunk) for more details.
+
+## Known issues
+
+Depending on the permissions you have for your `/var/run/docker.sock` *splunk*
+user may now have permissions to access it. To debug this issue, just open new
+iterative shell in container
+
+```bash
+docker exec -it your_container_name bash
+```
+
+After that check the `$SPLUNK_HOME\var\log\splunk\splunkd.log`, if you will see
+something similar to
+
+```text
+11-10-2015 17:14:26.993 +0000 ERROR ExecProcessor - message from "/opt/splunk/etc/apps/docker/bin/docker_events.sh" Cannot connect to the Docker daemon. Is the dock er daemon running on this host?
+11-10-2015 17:14:27.990 +0000 ERROR ExecProcessor - message from "/opt/splunk/etc/apps/docker/bin/docker_stats.sh" Cannot connect to the Docker daemon. Is the docke r daemon running on this host?
+11-10-2015 17:14:28.006 +0000 ERROR ExecProcessor - message from "/opt/splunk/etc/apps/docker/bin/docker_top.sh" Cannot connect to the Docker daemon. Is the docker daemon running on this host?
+```
+
+That is your case. If you know how to fix permissions - do that. If you do not
+know how to do that - the easiest fix for you to launch forwarder in this
+container under `root` user
+
+
+```bash
+docker run --hostname docker \
+    --name docker_stats_splunk_forwarder \
+    --volume /var/run/docker.sock:/var/run/docker.sock:ro \
+    -e "SPLUNK_FORWARD_SERVER=splunk_indexer:9997" \
+    -e "SPLUNK_USER=root" \
+    -d outcoldman/docker-stats-splunk-forwarder:latest
+```
