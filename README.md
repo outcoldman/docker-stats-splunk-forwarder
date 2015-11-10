@@ -10,6 +10,7 @@
     - [Version](#version)
 - [Installation](#installation)
 - [Quick Start](#quick-start)
+- [Configuration](#configuration)
 - [Known issues](#known-issues)
 
 ## Supported tags
