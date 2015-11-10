@@ -94,7 +94,7 @@ To manually start container
 
 ```bash
 docker run --hostname docker \
-    --name docker_stats_splunk_forwarder
+    --name docker_stats_splunk_forwarder \
     --volume /var/run/docker.sock:/var/run/docker.sock:ro \
     -e "SPLUNK_FORWARD_SERVER=splunk_indexer:9997"
     -d outcoldman/docker-stats-splunk-forwarder:latest
